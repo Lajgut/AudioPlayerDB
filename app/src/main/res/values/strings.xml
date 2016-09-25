@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">AudioPlayerDB</string>
+    <string name="btnPlayPause">Play\Pause</string>
+    <string name="btnStop">Stop</string>
+
+
+
 
 </resources>
