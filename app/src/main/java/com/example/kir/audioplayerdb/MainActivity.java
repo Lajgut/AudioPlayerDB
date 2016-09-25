@@ -1,8 +1,11 @@
 package com.example.kir.audioplayerdb;
 
+import android.content.Intent;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -22,18 +25,27 @@ public class MainActivity extends AppCompatActivity {
 
 
         //список трэков с внешнего накопителя
-        ArrayList<File> mTracks = arrayList(Environment.getExternalStorageDirectory());
+        final ArrayList<File> mTracks = arrayList(Environment.getExternalStorageDirectory());
 
         items = new String[ mTracks.size() ];
 
-        //видимо по кругу они крутиться не будут, нужно исправить, и добавить повторы
+        //если сделать так, то по кругу они крутиться не будут, нужно исправить, и добавить повторы
         for (int i=0; i<mTracks.size(); i++){
             //toast(mTracks.get(i).getName());
             items[i] = mTracks.get(i).getName();
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1, items);  //выводим в list view, использую какой то
-        lv.setAdapter(adapter);                                                                                                       //стандартный simple......
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.track_layout,R.id.tv, items);
+        lv.setAdapter(adapter);
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                startActivity(new Intent(getApplicationContext(),PlayerActivity.class)
+                        .putExtra("position", position)
+                        .putExtra("tracks",mTracks));
+            }
+        });
 
     }
 
