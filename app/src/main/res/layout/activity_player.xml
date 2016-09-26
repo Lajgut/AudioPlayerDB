@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:id="@+id/seekBar" />
+        android:id="@+id/sb" />
 
     <Button
         android:text="@string/btnStop"
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="94dp"
         android:id="@+id/btnStop"
-        android:layout_below="@+id/seekBar"
+        android:layout_below="@+id/sb"
         android:layout_centerHorizontal="true" />
 
     <Button
@@ -40,10 +40,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/btnPlayPause"
-        android:layout_below="@+id/seekBar"
-        android:layout_alignLeft="@+id/btnStop"
-        android:layout_alignStart="@+id/btnStop"
-        android:layout_marginTop="23dp" />
+        android:layout_below="@+id/sb"
+        android:layout_marginTop="23dp"
+        android:layout_centerHorizontal="true"/>
 
     <Button
         android:layout_width="wrap_content"
