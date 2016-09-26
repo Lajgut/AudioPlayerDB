@@ -13,7 +13,7 @@ import android.widget.SeekBar;
 import java.io.File;
 import java.util.ArrayList;
 
-public class PlayerActivity extends AppCompatActivity implements View.OnClickListener {
+public class PlayerActivity extends AppCompatActivity {
 
     static  MediaPlayer mPlayer;
     ArrayList<File> mTracks;
@@ -32,10 +32,6 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         btnNext = (ImageButton) findViewById(R.id.btnNext);
         btnPrev = (ImageButton) findViewById(R.id.btnPrev);
         sb = (SeekBar) findViewById(R.id.sb);
-
-        btnPlayPause.setOnClickListener(this);
-        btnNext.setOnClickListener(this);
-        btnPrev.setOnClickListener(this);
 
         threadSB = new Thread(){
             public void run() {
@@ -61,15 +57,57 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        ArrayList<File> mTracks = (ArrayList) bundle.getParcelableArrayList("tracks");
+        final ArrayList<File> mTracks = (ArrayList) bundle.getParcelableArrayList("tracks"); //видимо это можно переписать получше, но я хз как
         position = bundle.getInt("position",0);
 
         uri = Uri.parse(mTracks.get(position).toString());
         mPlayer = MediaPlayer.create(getApplicationContext(),uri);
         mPlayer.start();
-        sb.setMax(mPlayer.getDuration());
 
+        sb.setMax(mPlayer.getDuration());
         threadSB.start();
+
+        btnPlayPause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mPlayer.isPlaying()){
+                    mPlayer.pause();
+                    btnPlayPause.setImageResource(R.drawable.play);
+                }
+                else {
+                    mPlayer.start();
+                    btnPlayPause.setImageResource(R.drawable.pause);
+                }
+            }
+        });
+
+        btnNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPlayer.stop();
+                mPlayer.release();
+                position=(position+1)%mTracks.size();
+                uri=Uri.parse(mTracks.get(position).toString());
+                mPlayer=MediaPlayer.create(getApplicationContext(),uri);
+                mPlayer.start();
+                btnPlayPause.setImageResource(R.drawable.pause);
+                sb.setMax(mPlayer.getDuration());
+            }
+        });
+
+        btnPrev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPlayer.stop();
+                mPlayer.release();
+                position = (position - 1 < 0)? mTracks.size()-1: position - 1; // если позиция больше нуля, то возвращает 1е значение, иначе 2е (типо отучаюсь говнокодить)
+                uri=Uri.parse(mTracks.get(position).toString());
+                mPlayer=MediaPlayer.create(getApplicationContext(),uri);
+                mPlayer.start();
+                btnPlayPause.setImageResource(R.drawable.pause);
+                sb.setMax(mPlayer.getDuration());
+            }
+        });
 
         sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -90,42 +128,4 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
-    @Override
-    public void onClick(View view) {
-        int id = view.getId();
-            switch (id){
-                case R.id.btnPlayPause:
-                    if (mPlayer.isPlaying()){
-                        btnPlayPause.setImageResource(R.drawable.play);
-                        mPlayer.pause();
-                    } else {
-                        btnPlayPause.setImageResource(R.drawable.pause);
-                        mPlayer.start();
-                    }
-                    break;
-
-                case R.id.btnNext:
-                    mPlayer.stop();
-                    mPlayer.release();
-                    position = (position+1)%mTracks.size();
-                    uri = Uri.parse(mTracks.get(position).toString());
-                    mPlayer = MediaPlayer.create(getApplicationContext(),uri);
-                    mPlayer.start();
-                    sb.setMax(mPlayer.getDuration());
-                    break;
-
-                case R.id.btnPrev:
-                    mPlayer.stop();
-                    mPlayer.release();
-                    position = (position - 1 < 0)? mTracks.size()-1: position - 1; // если позиция больше нуля, то возвращает 1е значение, иначе 2е (типо отучаюсь говнокодить)
-                    uri = Uri.parse(mTracks.get(position).toString());
-                    mPlayer = MediaPlayer.create(getApplicationContext(),uri);
-                    mPlayer.start();
-                    sb.setMax(mPlayer.getDuration());
-                    break;
-
-            }
-
-
-    }
 }

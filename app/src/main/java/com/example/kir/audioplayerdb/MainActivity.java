@@ -29,9 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
         items = new String[ mTracks.size() ];
 
-        //если сделать так, то по кругу они крутиться не будут, нужно исправить, и добавить повторы
         for (int i=0; i<mTracks.size(); i++){
-            //toast(mTracks.get(i).getName());
             items[i] = mTracks.get(i).getName();
         }
 
