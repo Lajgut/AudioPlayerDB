@@ -21,6 +21,7 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
     Uri uri;
     ImageButton btnPlayPause, btnNext, btnPrev;
     SeekBar sb;
+    Thread threadSB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +34,25 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         sb = (SeekBar) findViewById(R.id.sb);
 
         btnPlayPause.setOnClickListener(this);
-
         btnNext.setOnClickListener(this);
         btnPrev.setOnClickListener(this);
+
+        threadSB = new Thread(){
+            public void run() {
+                int duration = mPlayer.getDuration();
+                int currentPosition = 0;
+                while (currentPosition < duration) {
+                    try {
+                        sleep(500);
+                        currentPosition = mPlayer.getCurrentPosition();
+                        sb.setProgress(currentPosition);
+                    } catch (InterruptedException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+
 
         if (mPlayer!=null){             //остановить проигрывание трека при переходе к следующему
             mPlayer.stop();
@@ -50,6 +67,27 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         uri = Uri.parse(mTracks.get(position).toString());
         mPlayer = MediaPlayer.create(getApplicationContext(),uri);
         mPlayer.start();
+        sb.setMax(mPlayer.getDuration());
+
+        threadSB.start();
+
+        sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            mPlayer.seekTo(seekBar.getProgress());
+            }
+        });
+
     }
 
     @Override
@@ -73,6 +111,7 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
                     uri = Uri.parse(mTracks.get(position).toString());
                     mPlayer = MediaPlayer.create(getApplicationContext(),uri);
                     mPlayer.start();
+                    sb.setMax(mPlayer.getDuration());
                     break;
 
                 case R.id.btnPrev:
@@ -82,6 +121,7 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
                     uri = Uri.parse(mTracks.get(position).toString());
                     mPlayer = MediaPlayer.create(getApplicationContext(),uri);
                     mPlayer.start();
+                    sb.setMax(mPlayer.getDuration());
                     break;
 
             }
