@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 
 import java.io.File;
@@ -18,7 +19,7 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
     ArrayList<File> mTracks;
     int position;
     Uri uri;
-    Button btnPlayPause, btnStop, btnNext, btnPrev;
+    ImageButton btnPlayPause, btnNext, btnPrev;
     SeekBar sb;
 
     @Override
@@ -26,20 +27,15 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
 
-        btnPlayPause = (Button) findViewById(R.id.btnPlayPause);
-        btnStop = (Button) findViewById(R.id.btnStop);
-        btnNext = (Button) findViewById(R.id.btnNext);
-        btnPrev = (Button) findViewById(R.id.btnPrev);
+        btnPlayPause = (ImageButton) findViewById(R.id.btnPlayPause);
+        btnNext = (ImageButton) findViewById(R.id.btnNext);
+        btnPrev = (ImageButton) findViewById(R.id.btnPrev);
         sb = (SeekBar) findViewById(R.id.sb);
 
         btnPlayPause.setOnClickListener(this);
-        btnStop.setOnClickListener(this);
+
         btnNext.setOnClickListener(this);
         btnPrev.setOnClickListener(this);
-
-        btnPlayPause.setText("||");
-        btnNext.setText(">|");
-        btnPrev.setText("|<");
 
         if (mPlayer!=null){             //остановить проигрывание трека при переходе к следующему
             mPlayer.stop();
@@ -62,20 +58,12 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
             switch (id){
                 case R.id.btnPlayPause:
                     if (mPlayer.isPlaying()){
-                        btnPlayPause.setText(">");
+                        btnPlayPause.setImageResource(R.drawable.play);
                         mPlayer.pause();
                     } else {
-                        btnPlayPause.setText("||");
+                        btnPlayPause.setImageResource(R.drawable.pause);
                         mPlayer.start();
                     }
-                    break;
-
-                case R.id.btnStop:
-                    if (mPlayer.isPlaying()) {
-                    }
-                    mPlayer.stop();
-                    mPlayer.release();
-
                     break;
 
                 case R.id.btnNext:
